@@ -116,7 +116,11 @@ public class AwsSigV4Authenticator {
         AwsInternalLogger.error("Error getting credentials: \(error)")
         return urlRequest
       }
-      let identity = try AWSCredentialIdentity(crtAWSCredentialIdentity: credentials)
+      let identity = AWSCredentialIdentity(
+    accessKey: credentials.accessKey,
+    secret: credentials.secret,
+    sessionToken: credentials.sessionToken
+)
 
       // Configure the signing parameters
       let config = AWSSigningConfig(
