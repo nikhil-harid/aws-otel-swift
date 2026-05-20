@@ -34,7 +34,7 @@ public class AwsHttpClient: HTTPClient {
   }
 
   private func executeWithRetry(request: URLRequest, attempt: Int, completion: @escaping (Result<HTTPURLResponse, Error>) -> Void) {
-    let task = session.dataTask(with: request) { [weak self] _, response, error in
+    let task = session.dataTask(with: request) { [weak self] data, response, error in
       guard let self else {
         let error = NSError(domain: "AwsHttpClient", code: -1, userInfo: [NSLocalizedDescriptionKey: "HTTP client was deallocated"])
         completion(.failure(error))
@@ -66,6 +66,25 @@ public class AwsHttpClient: HTTPClient {
 
       if statusCode >= 200, statusCode < 300 {
         AwsInternalLogger.debug("HTTP request succeeded on attempt \(attempt + 1)")
+        if let data = data {
+ 
+        print("Response data size: \(data.count)")
+ 
+        if let responseString = String(data: data, encoding: .utf8) {
+ 
+            print("Response body:")
+ 
+            print(responseString)
+ 
+        } else {
+ 
+            print("Binary protobuf response")
+ 
+            print(data as NSData)
+ 
+        }
+ 
+    }
         completion(.success(httpResponse))
         return
       }
